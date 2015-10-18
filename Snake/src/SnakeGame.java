@@ -3,6 +3,15 @@ import java.util.Scanner;
 
 public class SnakeGame {
 	
+	private static final char MOVE_RIGHT_KEY = 'r';
+
+	private static final char MOVE_LEFT_KEY = 'l';
+
+	private static final char MOVE_DOWN_KEY = 't';
+
+	//Konstanten delarieren
+	private static final char MOVE_UP_KEY = 'h';
+	
 	//Felder deklarieren		
 	private Point playerPosition;
 	private Point snakePosition;
@@ -84,10 +93,10 @@ public class SnakeGame {
 		Scanner scan = new Scanner(System.in);
 		
 		switch (scan.next().charAt(0)){
-				case 'h': playerPosition.y = Math.max(0,  playerPosition.y -1); break;
-				case 't': playerPosition.y = Math.min(9,  playerPosition.y +1); break;
-				case 'l': playerPosition.x = Math.max(0,  playerPosition.x -1); break;
-				case 'r': playerPosition.x = Math.min(39,  playerPosition.x +1); break;
+				case MOVE_UP_KEY: playerPosition.y = Math.max(0,  playerPosition.y -1); break;
+				case MOVE_DOWN_KEY: playerPosition.y = Math.min(9,  playerPosition.y +1); break;
+				case MOVE_LEFT_KEY: playerPosition.x = Math.max(0,  playerPosition.x -1); break;
+				case MOVE_RIGHT_KEY: playerPosition.x = Math.min(39,  playerPosition.x +1); break;
 		}
 		scan.close();
 	}
