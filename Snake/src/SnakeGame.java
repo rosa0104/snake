@@ -3,33 +3,43 @@ import java.util.Scanner;
 
 public class SnakeGame {
 	
+	//Konstanten delarieren
 	private static final char MOVE_RIGHT_KEY = 'r';
 
 	private static final char MOVE_LEFT_KEY = 'l';
 
 	private static final char MOVE_DOWN_KEY = 't';
 
-	//Konstanten delarieren
+
 	private static final char MOVE_UP_KEY = 'h';
 	
 	//Felder deklarieren		
 	private Point playerPosition;
 	private Point snakePosition;
 	private Point goldPosition;
+	private Point gold2Position;
 	private Point doorPosition;
 	private boolean goldGefunden;
+	private boolean zweitesGoldGefunden;
 	private boolean spielLaeuft;
+	
+	private Scanner scan;
+	
 
 	//Konstruktor
 	public SnakeGame(){
 		//Felder intitialisieren (Anfangswerte zuweisen)
-			playerPosition = new java.awt.Point(10, 9);
-			snakePosition = new java.awt.Point(30, 2);
-			goldPosition = new java.awt.Point(6,6);
-			doorPosition = new java.awt.Point(0,5);
+			playerPosition = new Point(10, 9);
+			snakePosition = new Point(30, 2);
+			goldPosition = new Point(6,6);
+			gold2Position = new Point(7,7);
+			doorPosition = new Point(0,5);
 		
 			goldGefunden = false;
+			zweitesGoldGefunden = false;
 			spielLaeuft = false;
+			
+			scan = new Scanner(System.in);
 	}
 	
 	public static void main( String[] args)	{
@@ -52,10 +62,12 @@ public class SnakeGame {
 				schlangeBewegen();		
 				statusBestimmen();
 		}
+		
+		scan.close();
 	}
 
 	private void statusBestimmen() {
-		if (goldGefunden && playerPosition.equals(doorPosition)){
+		if (goldGefunden && zweitesGoldGefunden && playerPosition.equals(doorPosition)){
 			System.out.println("Gewonnen!");
 			spielLaeuft = false;
 		}
@@ -68,6 +80,10 @@ public class SnakeGame {
 		if (playerPosition.equals(goldPosition)){
 			goldGefunden = true;
 			goldPosition.setLocation(-1,-1);
+		}
+		if (playerPosition.equals(gold2Position)){
+			zweitesGoldGefunden = true;
+			gold2Position.setLocation(-1, -1);
 		}
 	}
 
@@ -89,16 +105,13 @@ public class SnakeGame {
 
 
 	private void spielerBewegen() {
-		//Konsoleneingabe und Spielerposition verändern
-		Scanner scan = new Scanner(System.in);
-		
+		//Konsoleneingabe und Spielerposition verändern	
 		switch (scan.next().charAt(0)){
 				case MOVE_UP_KEY: playerPosition.y = Math.max(0,  playerPosition.y -1); break;
 				case MOVE_DOWN_KEY: playerPosition.y = Math.min(9,  playerPosition.y +1); break;
 				case MOVE_LEFT_KEY: playerPosition.x = Math.max(0,  playerPosition.x -1); break;
 				case MOVE_RIGHT_KEY: playerPosition.x = Math.min(39,  playerPosition.x +1); break;
 		}
-		scan.close();
 	}
 
 	private void rasterMitFigurenZeichnen() {
@@ -111,6 +124,8 @@ public class SnakeGame {
 								System.out.print('s');
 						} else if (goldPosition.equals(p)){
 								System.out.print('$');
+						} else if (gold2Position.equals(p)){
+							System.out.print('$');
 						} else if (doorPosition.equals(p)){
 								System.out.print('#');
 						} else {
