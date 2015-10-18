@@ -1,5 +1,7 @@
 import java.awt.Point;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class SnakeGame {
 	
@@ -10,17 +12,13 @@ public class SnakeGame {
 
 	private static final char MOVE_DOWN_KEY = 't';
 
-
 	private static final char MOVE_UP_KEY = 'h';
 	
 	//Felder deklarieren		
 	private Point playerPosition;
 	private Point snakePosition;
-	private Point goldPosition;
-	private Point gold2Position;
+	private Set<Gold> alleGold;
 	private Point doorPosition;
-	private boolean goldGefunden;
-	private boolean zweitesGoldGefunden;
 	private boolean spielLaeuft;
 	
 	private Scanner scan;
@@ -30,16 +28,23 @@ public class SnakeGame {
 	public SnakeGame(){
 		//Felder intitialisieren (Anfangswerte zuweisen)
 			playerPosition = new Point(10, 9);
-			snakePosition = new Point(30, 2);
-			goldPosition = new Point(6,6);
-			gold2Position = new Point(7,7);
+			snakePosition = new Point(30, 2);		
+			alleGold = initGold();
 			doorPosition = new Point(0,5);
-		
-			goldGefunden = false;
-			zweitesGoldGefunden = false;
-			spielLaeuft = false;
-			
+
+			spielLaeuft = false;		
 			scan = new Scanner(System.in);
+	}
+
+	private HashSet<Gold> initGold() {
+		HashSet<Gold> newSet = new HashSet<Gold>();
+		Gold gold1 = new Gold(6,6);
+		newSet.add(gold1);
+		Gold gold2 = new Gold(7,7);
+		newSet.add(gold2);
+		Gold gold3 = new Gold(9,7);
+		newSet.add(gold3);
+		return newSet;
 	}
 	
 	public static void main( String[] args)	{
@@ -67,7 +72,7 @@ public class SnakeGame {
 	}
 
 	private void statusBestimmen() {
-		if (goldGefunden && zweitesGoldGefunden && playerPosition.equals(doorPosition)){
+		if (alleGoldGefunden() && playerPosition.equals(doorPosition)){
 			System.out.println("Gewonnen!");
 			spielLaeuft = false;
 		}
@@ -76,15 +81,22 @@ public class SnakeGame {
 			System.out.println("Die Schlange hat dich!");
 			spielLaeuft = false;
 		}
+		
+		for (Gold someGold: alleGold){
+			if (playerPosition.equals(someGold.getPosition())){
+				someGold.gefunden = true;
+				someGold.setPosition(-1 , -1);
+			};
+		}
+	}
 
-		if (playerPosition.equals(goldPosition)){
-			goldGefunden = true;
-			goldPosition.setLocation(-1,-1);
+	private boolean alleGoldGefunden() {
+		for (Gold g: alleGold){
+			if (g.gefunden == false){
+				return false;
+			}
 		}
-		if (playerPosition.equals(gold2Position)){
-			zweitesGoldGefunden = true;
-			gold2Position.setLocation(-1, -1);
-		}
+		return true;
 	}
 
 	private void schlangeBewegen() {
@@ -122,10 +134,8 @@ public class SnakeGame {
 								System.out.print('&');
 						} else if (snakePosition.equals(p)){
 								System.out.print('s');
-						} else if (goldPosition.equals(p)){
+						} else if (goldPositions().contains(p)){
 								System.out.print('$');
-						} else if (gold2Position.equals(p)){
-							System.out.print('$');
 						} else if (doorPosition.equals(p)){
 								System.out.print('#');
 						} else {
@@ -134,6 +144,14 @@ public class SnakeGame {
 				}
 			System.out.println();
 		}
+	}
+
+	private Set<Point> goldPositions() {
+		Set<Point> allPositions = new HashSet<Point>();
+		for (Gold g: alleGold){
+			allPositions.add(g.getPosition());
+		}
+		return allPositions;
 	}
 
 }
