@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class SnakeGame {
 	
-	//Felder		
+	//Felder deklarieren		
 	private Point playerPosition;
 	private Point snakePosition;
 	private Point goldPosition;
@@ -12,6 +12,7 @@ public class SnakeGame {
 
 	//Konstruktor
 	public SnakeGame(){
+		//Felder intitialisieren (Anfangswerte zuweisen)
 			playerPosition = new java.awt.Point(10, 9);
 			snakePosition = new java.awt.Point(30, 2);
 			goldPosition = new java.awt.Point(6,6);
@@ -21,7 +22,13 @@ public class SnakeGame {
 	}
 	
 	public static void main( String[] args)	{
-		SnakeGame myGame = new SnakeGame();
+		//Deklariere Variable namens myGame vom Typ SnakeGame (Jede Variable hat einen Typ, das ist entweder ein primitiver Typ wie int oder eine Klasse
+		SnakeGame myGame;
+		
+		//Erzeuge neues Objekt der Klasse SnakeGame und weise es myGame zu
+		myGame = new SnakeGame();
+		
+		//rufe play()-Methode des neuen Objekts auf
 		myGame.play();
 	}
 
