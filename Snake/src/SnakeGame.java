@@ -9,6 +9,7 @@ public class SnakeGame {
 	private Point goldPosition;
 	private Point doorPosition;
 	private boolean goldGefunden;
+	private boolean spielLaeuft;
 
 	//Konstruktor
 	public SnakeGame(){
@@ -19,6 +20,7 @@ public class SnakeGame {
 			doorPosition = new java.awt.Point(0,5);
 		
 			goldGefunden = false;
+			spielLaeuft = false;
 	}
 	
 	public static void main( String[] args)	{
@@ -33,54 +35,64 @@ public class SnakeGame {
 	}
 
 	private void play() {
+		spielLaeuft = true;
+		
+		while(spielLaeuft){
+				rasterMitFigurenZeichnen();
+				spielerBewegen();		
+				schlangeBewegen();		
+				statusBestimmen();
+		}
+	}
 
-		while(true){
-				rasterMitFigurenZeichnen(playerPosition, snakePosition, goldPosition, doorPosition);
-						
-				if (goldGefunden && playerPosition.equals(doorPosition)){
-					System.out.println("Gewonnen!");
-					break;
-				}
+	private void statusBestimmen() {
+		if (goldGefunden && playerPosition.equals(doorPosition)){
+			System.out.println("Gewonnen!");
+			spielLaeuft = false;
+		}
 
-				if (playerPosition.equals(snakePosition)){
-					System.out.println("Die Schlange hat dich!");
-					break;
-				}
+		if (playerPosition.equals(snakePosition)){
+			System.out.println("Die Schlange hat dich!");
+			spielLaeuft = false;
+		}
 
-				if (playerPosition.equals(goldPosition)){
-					goldGefunden = true;
-					goldPosition.setLocation(-1,-1);
-				}
-			
-				//Konsoleneingabe und Spielerposition verändern
-		
-				switch (new Scanner(System.in).next().charAt(0)){
-						case 'h': playerPosition.y = Math.max(0,  playerPosition.y -1); break;
-						case 't': playerPosition.y = Math.min(9,  playerPosition.y +1); break;
-						case 'l': playerPosition.x = Math.max(0,  playerPosition.x -1); break;
-						case 'r': playerPosition.x = Math.min(39,  playerPosition.x +1); break;
-				}
-					
-				//Schlange bewegt sich in Richtung Spieler
-		
-				if (playerPosition.x < snakePosition.x){
-						snakePosition.x--;
-				} else if (playerPosition.x > snakePosition.x) {
-						snakePosition.x++;
-				}
-		
-				if (playerPosition.y < snakePosition.y){
-						snakePosition.y--;
-				} else if (playerPosition.y > snakePosition.y) {
-						snakePosition.y++;
-				}
-		
+		if (playerPosition.equals(goldPosition)){
+			goldGefunden = true;
+			goldPosition.setLocation(-1,-1);
+		}
+	}
+
+	private void schlangeBewegen() {
+		//Schlange bewegt sich in Richtung Spieler
+
+		if (playerPosition.x < snakePosition.x){
+				snakePosition.x--;
+		} else if (playerPosition.x > snakePosition.x) {
+				snakePosition.x++;
+		}
+
+		if (playerPosition.y < snakePosition.y){
+				snakePosition.y--;
+		} else if (playerPosition.y > snakePosition.y) {
+				snakePosition.y++;
 		}
 	}
 
 
-	private void rasterMitFigurenZeichnen(java.awt.Point playerPosition, java.awt.Point snakePosition,
-			java.awt.Point goldPosition, java.awt.Point doorPosition) {
+	private void spielerBewegen() {
+		//Konsoleneingabe und Spielerposition verändern
+		Scanner scan = new Scanner(System.in);
+		
+		switch (scan.next().charAt(0)){
+				case 'h': playerPosition.y = Math.max(0,  playerPosition.y -1); break;
+				case 't': playerPosition.y = Math.min(9,  playerPosition.y +1); break;
+				case 'l': playerPosition.x = Math.max(0,  playerPosition.x -1); break;
+				case 'r': playerPosition.x = Math.min(39,  playerPosition.x +1); break;
+		}
+		scan.close();
+	}
+
+	private void rasterMitFigurenZeichnen() {
 		for (int y = 0; y < 10; y++){
 				for (int x = 0; x < 40; x++){
 						Point p = new Point (x,y);
@@ -97,7 +109,6 @@ public class SnakeGame {
 						}
 				}
 			System.out.println();
-
 		}
 	}
 
