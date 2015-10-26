@@ -1,18 +1,14 @@
 import java.awt.Point;
 
-public class Gold {
+public class Gold extends Item {
 
-	private Point position;
 	public boolean gefunden;
 
 	public Gold(int i, int j) {
-		this.position = new Point (i,j);
+		super(i,j);
 		gefunden = false;
 	}
 
-	public Point getPosition() {
-		return this.position;
-	}
 
 	public void setPosition(int i, int j) {
 		this.position = new Point(i,j);

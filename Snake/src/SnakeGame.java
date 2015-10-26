@@ -17,6 +17,7 @@ public class SnakeGame {
 	//Felder deklarieren		
 	private Point playerPosition;
 	private Point snakePosition;
+	private Set<Snake> alleSnake;
 	private Set<Gold> alleGold;
 	private Point doorPosition;
 	private boolean spielLaeuft;
@@ -28,12 +29,22 @@ public class SnakeGame {
 	public SnakeGame(){
 		//Felder intitialisieren (Anfangswerte zuweisen)
 			playerPosition = new Point(10, 9);
-			snakePosition = new Point(30, 2);		
+			
 			alleGold = initGold();
+			alleSnake = initSnake(); 
 			doorPosition = new Point(0,5);
 
 			spielLaeuft = false;		
 			scan = new Scanner(System.in);
+	}
+
+	private Set<Snake> initSnake() {
+		HashSet<Snake> newSet = new HashSet<Snake>();
+		Snake snake1 = new Snake(25,6);
+		newSet.add(snake1);
+		Snake snake2 = new Snake(30,1);
+		newSet.add(snake2);
+		return newSet;
 	}
 
 	private HashSet<Gold> initGold() {
@@ -64,7 +75,7 @@ public class SnakeGame {
 		while(spielLaeuft){
 				rasterMitFigurenZeichnen();
 				spielerBewegen();		
-				schlangeBewegen();		
+				schlangenBewegen();		
 				statusBestimmen();
 		}
 		
@@ -99,19 +110,22 @@ public class SnakeGame {
 		return true;
 	}
 
-	private void schlangeBewegen() {
-		//Schlange bewegt sich in Richtung Spieler
+	private void schlangenBewegen() {
+		//Schlangen bewegen sich in Richtung Spieler
 
-		if (playerPosition.x < snakePosition.x){
-				snakePosition.x--;
-		} else if (playerPosition.x > snakePosition.x) {
-				snakePosition.x++;
+		for (Snake snake: alleSnake){
+			
+		if (playerPosition.x < snake.getPosition().x){
+				snake.getPosition().x--;
+		} else if (playerPosition.x > snake.getPosition().x) {
+				snake.getPosition().x++;
 		}
 
-		if (playerPosition.y < snakePosition.y){
-				snakePosition.y--;
-		} else if (playerPosition.y > snakePosition.y) {
-				snakePosition.y++;
+		if (playerPosition.y < snake.getPosition().y){
+				snake.getPosition().y--;
+		} else if (playerPosition.y > snake.getPosition().y) {
+				snake.getPosition().y++;
+		}
 		}
 	}
 
@@ -132,7 +146,7 @@ public class SnakeGame {
 						Point p = new Point (x,y);
 						if (playerPosition.equals(p)) {
 								System.out.print('&');
-						} else if (snakePosition.equals(p)){
+						} else if (snakePositions().contains(p)){
 								System.out.print('s');
 						} else if (goldPositions().contains(p)){
 								System.out.print('$');
@@ -150,6 +164,14 @@ public class SnakeGame {
 		Set<Point> allPositions = new HashSet<Point>();
 		for (Gold g: alleGold){
 			allPositions.add(g.getPosition());
+		}
+		return allPositions;
+	}
+	
+	private Set<Point> snakePositions() {
+		Set<Point> allPositions = new HashSet<Point>();
+		for (Snake s: alleSnake){
+			allPositions.add(s.getPosition());
 		}
 		return allPositions;
 	}
