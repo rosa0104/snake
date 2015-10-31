@@ -1,15 +1,18 @@
 import java.awt.Point;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Item {
 
-	protected Point position;
+	protected List<Point> positions;
 
 	public Item(int i, int j) {
-		this.position = new Point (i,j);
+		this.positions = new LinkedList<Point>();
+		positions.add(0, new Point (i,j));
 	}
 
-	public Point getPosition() {
-		return position;
+	public List<Point> getPositions() {
+		return positions;
 	}
 	
 }

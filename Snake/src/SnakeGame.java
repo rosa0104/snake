@@ -6,13 +6,13 @@ import java.util.Set;
 public class SnakeGame {
 	
 	//Konstanten delarieren
-	private static final char MOVE_RIGHT_KEY = 'r';
+	private static final char MOVE_RIGHT_KEY = 'd';
 
-	private static final char MOVE_LEFT_KEY = 'l';
+	private static final char MOVE_LEFT_KEY = 'a';
 
-	private static final char MOVE_DOWN_KEY = 't';
+	private static final char MOVE_DOWN_KEY = 's';
 
-	private static final char MOVE_UP_KEY = 'h';
+	private static final char MOVE_UP_KEY = 'w';
 	
 	//Felder deklarieren		
 	private Point playerPosition;
@@ -28,7 +28,7 @@ public class SnakeGame {
 	//Konstruktor
 	public SnakeGame(){
 		//Felder intitialisieren (Anfangswerte zuweisen)
-			playerPosition = new Point(10, 9);
+			playerPosition = new Point(10, 7);
 			
 			alleGold = initGold();
 			alleSnake = initSnake(); 
@@ -71,61 +71,74 @@ public class SnakeGame {
 
 	private void play() {
 		spielLaeuft = true;
+		int rundenCounter = 0;
 		
 		while(spielLaeuft){
 				rasterMitFigurenZeichnen();
 				spielerBewegen();		
-				schlangenBewegen();		
+				schlangenBewegen(rundenCounter);		
 				statusBestimmen();
+				growAllSnakesIfItsTime(rundenCounter);
+				rundenCounter++;
 		}
 		
 		scan.close();
 	}
 
-	private void statusBestimmen() {
-		if (alleGoldGefunden() && playerPosition.equals(doorPosition)){
-			System.out.println("Gewonnen!");
-			spielLaeuft = false;
+	private void growAllSnakesIfItsTime(int rundenCounter) {
+		if (rundenCounter % 10 == 0) {
+			for (Snake s: alleSnake) {
+				s.grow();
+			}
 		}
+	}
 
-		if (playerPosition.equals(snakePosition)){
-			System.out.println("Die Schlange hat dich!");
-			spielLaeuft = false;
-		}
-		
+	private void statusBestimmen() {
+		checkWinCondition();
+		checkLossCondition();
+		checkGoldFound();
+	}
+
+	private void checkGoldFound() {
 		for (Gold someGold: alleGold){
-			if (playerPosition.equals(someGold.getPosition())){
-				someGold.gefunden = true;
-				someGold.setPosition(-1 , -1);
+			if (someGold.getPositions().contains(playerPosition)){
+				alleGold.remove(someGold);
+				shrinkAllSnakes();
 			};
 		}
 	}
 
-	private boolean alleGoldGefunden() {
-		for (Gold g: alleGold){
-			if (g.gefunden == false){
-				return false;
-			}
+	private void shrinkAllSnakes() {
+		for (Snake s: alleSnake){
+			s.shrink();
 		}
-		return true;
 	}
 
-	private void schlangenBewegen() {
-		//Schlangen bewegen sich in Richtung Spieler
-
-		for (Snake snake: alleSnake){
-			
-		if (playerPosition.x < snake.getPosition().x){
-				snake.getPosition().x--;
-		} else if (playerPosition.x > snake.getPosition().x) {
-				snake.getPosition().x++;
+	private void checkLossCondition() {
+		if (playerPosition.equals(snakePosition)){
+			System.out.println("Die Schlange hat dich!");
+			spielLaeuft = false;
 		}
+	}
 
-		if (playerPosition.y < snake.getPosition().y){
-				snake.getPosition().y--;
-		} else if (playerPosition.y > snake.getPosition().y) {
-				snake.getPosition().y++;
+	private void checkWinCondition() {
+		if (alleGoldGefunden() && playerPosition.equals(doorPosition)){
+			System.out.println("Gewonnen!");
+			spielLaeuft = false;
 		}
+	}
+
+	private boolean alleGoldGefunden() {
+		return alleGold.size() == 0;
+	}
+
+	private void schlangenBewegen(int rundenCounter) {
+		if (rundenCounter >= 5){
+		
+			//Schlangen bewegen sich in Richtung Spieler
+			for (Snake snake: alleSnake){		
+				snake.moveTowards(playerPosition);
+			}
 		}
 	}
 
@@ -163,7 +176,7 @@ public class SnakeGame {
 	private Set<Point> goldPositions() {
 		Set<Point> allPositions = new HashSet<Point>();
 		for (Gold g: alleGold){
-			allPositions.add(g.getPosition());
+			allPositions.addAll(g.getPositions());
 		}
 		return allPositions;
 	}
@@ -171,7 +184,7 @@ public class SnakeGame {
 	private Set<Point> snakePositions() {
 		Set<Point> allPositions = new HashSet<Point>();
 		for (Snake s: alleSnake){
-			allPositions.add(s.getPosition());
+			allPositions.addAll(s.getPositions());
 		}
 		return allPositions;
 	}

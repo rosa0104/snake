@@ -10,8 +10,8 @@ public class Gold extends Item {
 	}
 
 
-	public void setPosition(int i, int j) {
-		this.position = new Point(i,j);
+	public void setPositions(int i, int j) {
+		this.positions.set(0, new Point(i,j));
 	}
 
 }
