@@ -1,4 +1,8 @@
 import java.awt.Point;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 
 public class GameMap {
 
@@ -40,5 +44,15 @@ public class GameMap {
 
 	public void setPlayerPosition(int i, int j) {
 		this.playerPosition = new Point(i,j);
+	}
+
+	public void printGameMap(FileOutputStream fileOutputStream) throws IOException {
+		PrintWriter write = new PrintWriter(fileOutputStream);
+		char[][] content = getRepresentation();
+		for(int i = 0; i< content.length; i++){
+
+			write.println(content[i]);
+		}
+		write.flush();
 	}
 }
