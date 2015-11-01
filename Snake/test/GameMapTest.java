@@ -17,7 +17,7 @@ public class GameMapTest {
 	
 	@Before
 	public void setUp(){
-		map = new GameMap(STANDARD_HEIGHT,STANDARD_WIDTH);
+		map = new GameMap(STANDARD_WIDTH,STANDARD_HEIGHT);
 		map.setPlayerPosition(5,5);		
 		map.setDoorPosition(59,8);		
 		Set<Gold> allGolds = initGold();
@@ -43,11 +43,11 @@ public class GameMapTest {
 	@Test
 	public void testThatEmptyGameMapIsArrayOfDots() throws Exception {
 		//arrange
-		map = new GameMap(STANDARD_HEIGHT,STANDARD_WIDTH);
+		map = new GameMap(STANDARD_WIDTH,STANDARD_HEIGHT);
 		//act
 		char[][] rep = map.getRepresentation();
 		//assert
-		assertEqualArray(GameMap.createEmptyGameMapRepresentation(STANDARD_HEIGHT,STANDARD_WIDTH), rep);
+		assertEqualArray(GameMap.createEmptyGameMapRepresentation(STANDARD_WIDTH,STANDARD_HEIGHT), rep);
 	}
 	
 	@Test

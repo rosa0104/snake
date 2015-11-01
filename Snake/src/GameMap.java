@@ -1,6 +1,7 @@
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,7 @@ public class GameMap {
 	private Set<Snake> allSnakes;
 	private Point doorPosition;
 
-	public GameMap(int height, int width) {
+	public GameMap(int width, int height) {
 		this.height = height;
 		this.width = width;
 		this.allGolds = new HashSet<Gold>();
@@ -31,7 +32,7 @@ public class GameMap {
 	}
 
 	public char[][] getRepresentation() {
-		char[][] rep = createEmptyGameMapRepresentation(height, width);
+		char[][] rep = createEmptyGameMapRepresentation(width,height);
 		if (playerPosition != null) {
 			rep[playerPosition.x][playerPosition.y] = '&';
 		}
@@ -54,7 +55,7 @@ public class GameMap {
 
 	}
 	
-	public static char[][] createEmptyGameMapRepresentation(int height, int width) {
+	public static char[][] createEmptyGameMapRepresentation(int width, int height) {
 		char [][] newArray = new char[width][height];
 		for(int x = 0; x< width; x++){
 			for(int y = 0; y< height; y++){
@@ -71,7 +72,7 @@ public class GameMap {
 	public void setDoorPosition(int i, int j) {
 		this.doorPosition = new Point(i,j);	
 	}
-	public void printGameMap(FileOutputStream fileOutputStream) throws IOException {
+	public void printGameMap(OutputStream fileOutputStream) throws IOException {
 		PrintWriter write = new PrintWriter(fileOutputStream);
 		char[][] content = getRepresentation();
 		for(int y = 0; y< height; y++){
@@ -89,6 +90,22 @@ public class GameMap {
 
 	public void addSnakes(Set<Snake> allSnakes) {
 		this.allSnakes.addAll(allSnakes);
+	}
+
+	public Set<Snake>  getSnakes() {
+		return allSnakes;
+	}
+
+	public Set<Gold> getGolds() {
+		return allGolds;
+	}
+
+	public Point getPlayerPosition() {
+		return playerPosition;
+	}
+
+	public Point getDoorPosition() {
+		return doorPosition;
 	}
 
 }

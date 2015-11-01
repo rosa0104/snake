@@ -1,4 +1,5 @@
 import java.awt.Point;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -15,35 +16,37 @@ public class SnakeGame {
 	private static final char MOVE_UP_KEY = 'w';
 	
 	//Felder deklarieren		
-	private Point playerPosition;
-	private Point snakePosition;
-	private Set<Snake> alleSnake;
-	private Set<Gold> alleGold;
-	private Point doorPosition;
+
 	private boolean spielLaeuft;
 	
 	private Scanner scan;
+
+	private GameMap map;
 	
 
 	//Konstruktor
 	public SnakeGame(){
 		//Felder intitialisieren (Anfangswerte zuweisen)
-			playerPosition = new Point(10, 7);
-			
-			alleGold = initGold();
-			alleSnake = initSnake(); 
-			doorPosition = new Point(0,5);
-
-			spielLaeuft = false;		
-			scan = new Scanner(System.in);
+		map = new GameMap(60,20);
+		map.setPlayerPosition(5,5);		
+		map.setDoorPosition(10,19);		
+		Set<Gold> allGolds = initGold();
+		map.addGolds(allGolds);
+		Set<Snake> allSnakes = initSnake();
+		map.addSnakes(allSnakes);
+		
+		spielLaeuft = false;		
+		scan = new Scanner(System.in);
 	}
 
 	private Set<Snake> initSnake() {
 		HashSet<Snake> newSet = new HashSet<Snake>();
-		Snake snake1 = new Snake(25,6);
+		Snake snake1 = new Snake(1,0);
 		newSet.add(snake1);
 		Snake snake2 = new Snake(30,1);
 		newSet.add(snake2);
+		Snake snake3 = new Snake(50,19);
+		newSet.add(snake3);
 		return newSet;
 	}
 
@@ -58,7 +61,7 @@ public class SnakeGame {
 		return newSet;
 	}
 	
-	public static void main( String[] args)	{
+	public static void main( String[] args) throws IOException	{
 		//Deklariere Variable namens myGame vom Typ SnakeGame (Jede Variable hat einen Typ, das ist entweder ein primitiver Typ wie int oder eine Klasse
 		SnakeGame myGame;
 		
@@ -69,12 +72,12 @@ public class SnakeGame {
 		myGame.play();
 	}
 
-	private void play() {
+	private void play() throws IOException {
 		spielLaeuft = true;
 		int rundenCounter = 0;
 		
 		while(spielLaeuft){
-				rasterMitFigurenZeichnen();
+				map.printGameMap(System.out);
 				spielerBewegen();		
 				schlangenBewegen(rundenCounter);		
 				statusBestimmen();
@@ -87,7 +90,7 @@ public class SnakeGame {
 
 	private void growAllSnakesIfItsTime(int rundenCounter) {
 		if (rundenCounter % 10 == 0) {
-			for (Snake s: alleSnake) {
+			for (Snake s: map.getSnakes()) {
 				s.grow();
 			}
 		}
@@ -100,44 +103,44 @@ public class SnakeGame {
 	}
 
 	private void checkGoldFound() {
-		for (Gold someGold: alleGold){
-			if (someGold.getPositions().contains(playerPosition)){
-				alleGold.remove(someGold);
+		for (Gold someGold: new HashSet<Gold>(map.getGolds())){
+			if (someGold.getPositions().contains(map.getPlayerPosition())){
+				map.getGolds().remove(someGold);
 				shrinkAllSnakes();
 			};
 		}
 	}
 
 	private void shrinkAllSnakes() {
-		for (Snake s: alleSnake){
+		for (Snake s: map.getSnakes()){
 			s.shrink();
 		}
 	}
 
 	private void checkLossCondition() {
-		if (playerPosition.equals(snakePosition)){
+		if (snakePositions().contains(map.getPlayerPosition())){
 			System.out.println("Die Schlange hat dich!");
 			spielLaeuft = false;
 		}
 	}
 
 	private void checkWinCondition() {
-		if (alleGoldGefunden() && playerPosition.equals(doorPosition)){
+		if (alleGoldGefunden() && map.getPlayerPosition().equals(map.getDoorPosition())){
 			System.out.println("Gewonnen!");
 			spielLaeuft = false;
 		}
 	}
 
 	private boolean alleGoldGefunden() {
-		return alleGold.size() == 0;
+		return map.getGolds().size() == 0;
 	}
 
 	private void schlangenBewegen(int rundenCounter) {
 		if (rundenCounter >= 5){
 		
 			//Schlangen bewegen sich in Richtung Spieler
-			for (Snake snake: alleSnake){		
-				snake.moveTowards(playerPosition);
+			for (Snake snake: map.getSnakes()){		
+				snake.moveTowards(map.getPlayerPosition());
 			}
 		}
 	}
@@ -146,36 +149,16 @@ public class SnakeGame {
 	private void spielerBewegen() {
 		//Konsoleneingabe und Spielerposition verändern	
 		switch (scan.next().charAt(0)){
-				case MOVE_UP_KEY: playerPosition.y = Math.max(0,  playerPosition.y -1); break;
-				case MOVE_DOWN_KEY: playerPosition.y = Math.min(9,  playerPosition.y +1); break;
-				case MOVE_LEFT_KEY: playerPosition.x = Math.max(0,  playerPosition.x -1); break;
-				case MOVE_RIGHT_KEY: playerPosition.x = Math.min(39,  playerPosition.x +1); break;
-		}
-	}
-
-	private void rasterMitFigurenZeichnen() {
-		for (int y = 0; y < 10; y++){
-				for (int x = 0; x < 40; x++){
-						Point p = new Point (x,y);
-						if (playerPosition.equals(p)) {
-								System.out.print('&');
-						} else if (snakePositions().contains(p)){
-								System.out.print('s');
-						} else if (goldPositions().contains(p)){
-								System.out.print('$');
-						} else if (doorPosition.equals(p)){
-								System.out.print('#');
-						} else {
-								System.out.print('.');
-						}
-				}
-			System.out.println();
+				case MOVE_UP_KEY: map.getPlayerPosition().y = Math.max(0,  map.getPlayerPosition().y -1); break;
+				case MOVE_DOWN_KEY: map.getPlayerPosition().y = Math.min(map.getHeight(),  map.getPlayerPosition().y +1); break;
+				case MOVE_LEFT_KEY: map.getPlayerPosition().x = Math.max(0,  map.getPlayerPosition().x -1); break;
+				case MOVE_RIGHT_KEY: map.getPlayerPosition().x = Math.min(map.getWidth(),  map.getPlayerPosition().x +1); break;
 		}
 	}
 
 	private Set<Point> goldPositions() {
 		Set<Point> allPositions = new HashSet<Point>();
-		for (Gold g: alleGold){
+		for (Gold g: map.getGolds()){
 			allPositions.addAll(g.getPositions());
 		}
 		return allPositions;
@@ -183,7 +166,7 @@ public class SnakeGame {
 	
 	private Set<Point> snakePositions() {
 		Set<Point> allPositions = new HashSet<Point>();
-		for (Snake s: alleSnake){
+		for (Snake s: map.getSnakes()){
 			allPositions.addAll(s.getPositions());
 		}
 		return allPositions;
