@@ -2,6 +2,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,12 @@ public class GameMapTest {
 	@Before
 	public void setUp(){
 		map = new GameMap(STANDARD_HEIGHT,STANDARD_WIDTH);
+		map.setPlayerPosition(5,5);		
+		map.setDoorPosition(59,8);		
+		Set<Gold> allGolds = initGold();
+		map.addGolds(allGolds);
+		Set<Snake> allSnakes = initSnake();
+		map.addSnakes(allSnakes);
 	}
 	
 	@Test
@@ -35,7 +43,7 @@ public class GameMapTest {
 	@Test
 	public void testThatEmptyGameMapIsArrayOfDots() throws Exception {
 		//arrange
-
+		map = new GameMap(STANDARD_HEIGHT,STANDARD_WIDTH);
 		//act
 		char[][] rep = map.getRepresentation();
 		//assert
@@ -47,23 +55,52 @@ public class GameMapTest {
 		//arrange
 
 		//act
-		map.setPlayerPosition(5,5);
 		char[][] rep = map.getRepresentation();
 		//assert
 		assertEquals('&', rep[5][5]);
 	}
 	
 	@Test
+	public void testThatGameMapRecognizesDoorPosition() throws Exception {
+		//arrange
+		
+		//act
+		char[][] rep = map.getRepresentation();
+		//assert
+		assertEquals('#', rep[59][8]);
+	}
+	
+	@Test
 	public void testPrintGameMap() throws Exception {
 		//arrange
 		File testOutputFile = new File("testOutput.txt");
-		map.setPlayerPosition(5,5);
+		
 		//act
 		map.printGameMap(new FileOutputStream(testOutputFile));
 		//assert
 		String expectedFileContent = FileUtil.readFile("expectedOutput.txt");
 		String actualFileContent = FileUtil.readFile(testOutputFile);
 		assertEquals(expectedFileContent, actualFileContent);
+	}
+	
+	@Test
+	public void testThatGameMapRecognizesGoldPositions() throws Exception {
+		//arrange
+
+		//act
+
+		//assert
+		assertEquals('$', map.getRepresentation()[6][6]);
+	}
+	
+	@Test
+	public void testThatGameMapRecognizesSnakePositions() throws Exception {
+		//arrange
+		
+		//act
+		
+		//assert
+		assertEquals('S', map.getRepresentation()[15][6]);
 	}
 
 
@@ -80,6 +117,23 @@ public class GameMapTest {
 		}
 	}
 
+	private HashSet<Gold> initGold() {
+		HashSet<Gold> newSet = new HashSet<Gold>();
+		Gold gold1 = new Gold(6,6);
+		newSet.add(gold1);
+		Gold gold2 = new Gold(7,7);
+		newSet.add(gold2);
+		Gold gold3 = new Gold(9,7);
+		newSet.add(gold3);
+		return newSet;
+	}
 
-
+	private Set<Snake> initSnake() {
+		HashSet<Snake> newSet = new HashSet<Snake>();
+		Snake snake1 = new Snake(15,6);
+		newSet.add(snake1);
+		Snake snake2 = new Snake(19,1);
+		newSet.add(snake2);
+		return newSet;
+	}
 }
