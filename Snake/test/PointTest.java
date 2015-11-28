@@ -9,7 +9,7 @@ public class PointTest {
 public void testPointEquals() throws Exception {
 	//arrange
 	Point a = new Point(9,7);
-	Gold b = new Gold(9,7);
+	GameToken b = new Gold(9,7);
 	
 	//act
 	boolean result = b.getPositions().contains(a);

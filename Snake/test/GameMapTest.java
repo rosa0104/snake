@@ -24,8 +24,11 @@ public class GameMapTest {
 		map.addGolds(allGolds);
 		Set<Snake> allSnakes = initSnake();
 		map.addSnakes(allSnakes);
+		Set<Wall> allWalls = initWall();
+		map.addWalls(allWalls);
 	}
-	
+
+
 	@Test
 	public void testThatGameMapHasTheSetDimensions() throws Exception {
 		//arrange
@@ -61,6 +64,16 @@ public class GameMapTest {
 	}
 	
 	@Test
+	public void testThatGameMapRecognizesWallsPosition() throws Exception {
+		//arrange
+		
+		//act
+		char[][] rep = map.getRepresentation();
+		//assert
+		assertEquals('X', rep[13][6]);
+	}
+	
+	@Test
 	public void testThatGameMapRecognizesDoorPosition() throws Exception {
 		//arrange
 		
@@ -90,7 +103,7 @@ public class GameMapTest {
 		//act
 
 		//assert
-		assertEquals('$', map.getRepresentation()[6][6]);
+		assertEquals(Gold.GOLD_ICON, map.getRepresentation()[6][6]);
 	}
 	
 	@Test
@@ -100,7 +113,7 @@ public class GameMapTest {
 		//act
 		
 		//assert
-		assertEquals('S', map.getRepresentation()[15][6]);
+		assertEquals(Snake.SNAKE_ICON, map.getRepresentation()[15][6]);
 	}
 
 
@@ -134,6 +147,14 @@ public class GameMapTest {
 		newSet.add(snake1);
 		Snake snake2 = new Snake(19,1);
 		newSet.add(snake2);
+		return newSet;
+	}
+	
+	
+	private Set<Wall> initWall() {
+		HashSet<Wall> newSet = new HashSet<Wall>();
+		Wall wall1 = Wall.create(13,6);
+		newSet.add(wall1);
 		return newSet;
 	}
 }

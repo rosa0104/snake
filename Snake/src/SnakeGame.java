@@ -1,11 +1,15 @@
 import java.awt.Point;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
 public class SnakeGame {
 	
+	private static final int DELAY = 5;
+
 	//Konstanten delarieren
 	private static final char MOVE_RIGHT_KEY = 'd';
 
@@ -22,6 +26,9 @@ public class SnakeGame {
 	private Scanner scan;
 
 	private GameMap map;
+
+	public static List<Character> moveKeys = Arrays.asList(new Character[] {MOVE_RIGHT_KEY, MOVE_LEFT_KEY, MOVE_DOWN_KEY, MOVE_UP_KEY});
+
 	
 
 	//Konstruktor
@@ -34,10 +41,19 @@ public class SnakeGame {
 		map.addGolds(allGolds);
 		Set<Snake> allSnakes = initSnake();
 		map.addSnakes(allSnakes);
+		Set<Wall> allWalls = initWall();
+		map.addWalls(allWalls);
 		
 		spielLaeuft = false;		
 		scan = new Scanner(System.in);
 	}
+
+	private Set<Wall> initWall() {
+		HashSet<Wall> newSet = new HashSet<Wall>();
+		Wall wall1 = Wall.create (13,6);
+		newSet.add(wall1);
+		return newSet;
+ 	}
 
 	private Set<Snake> initSnake() {
 		HashSet<Snake> newSet = new HashSet<Snake>();
@@ -103,7 +119,7 @@ public class SnakeGame {
 	}
 
 	private void checkGoldFound() {
-		for (Gold someGold: new HashSet<Gold>(map.getGolds())){
+		for (GameToken someGold: new HashSet<Gold>(map.getGolds())){
 			if (someGold.getPositions().contains(map.getPlayerPosition())){
 				map.getGolds().remove(someGold);
 				shrinkAllSnakes();
@@ -136,7 +152,7 @@ public class SnakeGame {
 	}
 
 	private void schlangenBewegen(int rundenCounter) {
-		if (rundenCounter >= 5){
+		if (rundenCounter >= DELAY){
 		
 			//Schlangen bewegen sich in Richtung Spieler
 			for (Snake snake: map.getSnakes()){		
@@ -148,17 +164,21 @@ public class SnakeGame {
 
 	private void spielerBewegen() {
 		//Konsoleneingabe und Spielerposition verändern	
-		switch (scan.next().charAt(0)){
+		char pressedKey = ' ';
+		while (!moveKeys.contains(pressedKey)) {
+			pressedKey = scan.next().charAt(0);
+		}
+		switch (pressedKey){
 				case MOVE_UP_KEY: map.getPlayerPosition().y = Math.max(0,  map.getPlayerPosition().y -1); break;
-				case MOVE_DOWN_KEY: map.getPlayerPosition().y = Math.min(map.getHeight(),  map.getPlayerPosition().y +1); break;
+				case MOVE_DOWN_KEY: map.getPlayerPosition().y = Math.min(map.getHeight() -1,  map.getPlayerPosition().y +1); break;
 				case MOVE_LEFT_KEY: map.getPlayerPosition().x = Math.max(0,  map.getPlayerPosition().x -1); break;
-				case MOVE_RIGHT_KEY: map.getPlayerPosition().x = Math.min(map.getWidth(),  map.getPlayerPosition().x +1); break;
+				case MOVE_RIGHT_KEY: map.getPlayerPosition().x = Math.min(map.getWidth() -1,  map.getPlayerPosition().x +1); break;
 		}
 	}
 
 	private Set<Point> goldPositions() {
 		Set<Point> allPositions = new HashSet<Point>();
-		for (Gold g: map.getGolds()){
+		for (GameToken g: map.getGolds()){
 			allPositions.addAll(g.getPositions());
 		}
 		return allPositions;

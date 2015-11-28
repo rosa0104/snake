@@ -1,12 +1,14 @@
 import java.awt.Point;
 
-public class Snake extends Item {
+public class Snake extends GameToken {
 	
+	private static final int SNAKE_STANDARD_SIZE = 3;
+	public static final char SNAKE_ICON = 'S';
 	private int length;
 
 	public Snake(int i, int j) {
 		super(i,j);
-		length = 3;
+		length = SNAKE_STANDARD_SIZE;
 	}
 
 	public void moveTowards(Point playerPosition) {
@@ -45,6 +47,11 @@ public class Snake extends Item {
 		if (length < 15) {
 			this.length++;
 		}
+	}
+
+	@Override
+	protected char getIcon() {
+		return SNAKE_ICON;
 	}
 
 
